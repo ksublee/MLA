@@ -1,0 +1,26 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "MLA"
+  author: "Kyungsub Lee"
+  chapters:
+    - index.qmd
+    - 01. Introduction.ipynb
+    - 02. Model_evaluation.ipynb
+    - 03. Linear regression.ipynb
+    - 04. Classification - Logistic Regression.ipynb
+    - 05. Classification - LDA.ipynb
+    - 06. Resampling.ipynb
+    - 07. Regularization.ipynb
+
+execute:
+  freeze: false
+  error: false
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3

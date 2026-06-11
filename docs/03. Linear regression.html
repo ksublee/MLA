@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>3&nbsp; Linear regression – MLA</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./04. Classification - Logistic Regression.html" rel="next">
+<link href="./02. Model_evaluation.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-15634bcf2e68342d4ad2dfa704d543f6.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-9e3e5b9121e68b3f077afb32f2c64d95.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar floating quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./03. Linear regression.html"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Linear regression</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">MLA</a> 
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Course Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01. Introduction.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">통계적 기계 학습 개요</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02. Model_evaluation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">모형 정확성 평가</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03. Linear regression.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Linear regression</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./04. Classification - Logistic Regression.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Classification</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./05. Classification - LDA.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Linear discriminant analysis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./06. Resampling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Resampling method</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./07. Regularization.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Linear model selection and model regularization</span></span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#linear-regression-model" id="toc-linear-regression-model" class="nav-link active" data-scroll-target="#linear-regression-model"><span class="header-section-number">3.1</span> Linear regression model</a></li>
+  <li><a href="#training-data" id="toc-training-data" class="nav-link" data-scroll-target="#training-data"><span class="header-section-number">3.2</span> Training data</a></li>
+  <li><a href="#fitted-model" id="toc-fitted-model" class="nav-link" data-scroll-target="#fitted-model"><span class="header-section-number">3.3</span> Fitted model</a></li>
+  <li><a href="#least-squares-estimation" id="toc-least-squares-estimation" class="nav-link" data-scroll-target="#least-squares-estimation"><span class="header-section-number">3.4</span> Least squares estimation</a></li>
+  <li><a href="#matrix-notation" id="toc-matrix-notation" class="nav-link" data-scroll-target="#matrix-notation"><span class="header-section-number">3.5</span> Matrix notation</a></li>
+  <li><a href="#정규방정식" id="toc-정규방정식" class="nav-link" data-scroll-target="#정규방정식"><span class="header-section-number">3.6</span> 정규방정식</a></li>
+  <li><a href="#sklearn.linear_model.linearregression" id="toc-sklearn.linear_model.linearregression" class="nav-link" data-scroll-target="#sklearn.linear_model.linearregression"><span class="header-section-number">3.7</span> <code>sklearn.linear_model.LinearRegression</code></a>
+  <ul class="collapse">
+  <li><a href="#mse-비용함수와-선형회귀에서의-최적화" id="toc-mse-비용함수와-선형회귀에서의-최적화" class="nav-link" data-scroll-target="#mse-비용함수와-선형회귀에서의-최적화"><span class="header-section-number">3.7.1</span> MSE 비용함수와 선형회귀에서의 최적화</a></li>
+  </ul></li>
+  <li><a href="#경사하강법-gd-gradient-descent" id="toc-경사하강법-gd-gradient-descent" class="nav-link" data-scroll-target="#경사하강법-gd-gradient-descent"><span class="header-section-number">3.8</span> 경사하강법 (GD, Gradient Descent)</a>
+  <ul class="collapse">
+  <li><a href="#선형회귀모형의-graident-vector" id="toc-선형회귀모형의-graident-vector" class="nav-link" data-scroll-target="#선형회귀모형의-graident-vector"><span class="header-section-number">3.8.1</span> 선형회귀모형의 graident vector</a></li>
+  <li><a href="#학습률과-경사-하강" id="toc-학습률과-경사-하강" class="nav-link" data-scroll-target="#학습률과-경사-하강"><span class="header-section-number">3.8.2</span> 학습률과 경사 하강</a></li>
+  <li><a href="#배치-경사-하강법" id="toc-배치-경사-하강법" class="nav-link" data-scroll-target="#배치-경사-하강법"><span class="header-section-number">3.8.3</span> 배치 경사 하강법</a></li>
+  <li><a href="#확률적-경사-하강법" id="toc-확률적-경사-하강법" class="nav-link" data-scroll-target="#확률적-경사-하강법"><span class="header-section-number">3.8.4</span> 확률적 경사 하강법</a></li>
+  <li><a href="#미니배치-경사-하강법" id="toc-미니배치-경사-하강법" class="nav-link" data-scroll-target="#미니배치-경사-하강법"><span class="header-section-number">3.8.5</span> 미니배치 경사 하강법</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Linear regression</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>선형회귀(linear regression)는 입력 변수와 반응 변수 사이의 관계를 선형 함수로 근사하는 가장 기본적인 회귀 모형이다.</p>
+<p>앞에서 일반적인 예측 모형을 다음과 같이 표현하였다.</p>
+<p><span class="math display">\[
+Y = f(X) + \epsilon.
+\]</span></p>
+<p>선형회귀에서는 함수 <span class="math inline">\(f\)</span>가 입력 변수들의 선형 결합으로 표현된다고 가정한다.</p>
+<section id="linear-regression-model" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="linear-regression-model"><span class="header-section-number">3.1</span> Linear regression model</h2>
+<p>입력 변수가 <span class="math inline">\(p\)</span>개인 선형회귀모형은 다음과 같다.</p>
+<p><span class="math display">\[
+Y
+=
+\theta_0
++
+\theta_1 X_1
++
+\cdots
++
+\theta_p X_p
++
+\epsilon.
+\]</span></p>
+<p>여기서 <span class="math inline">\(\theta_0\)</span>는 절편(intercept), <span class="math inline">\(\theta_1,\ldots,\theta_p\)</span>는 회귀계수(regression coefficients)이다.</p>
+<p>회귀계수 <span class="math inline">\(\theta_j\)</span>는 다른 입력 변수들이 고정되어 있을 때, <span class="math inline">\(X_j\)</span>가 한 단위 증가함에 따라 <span class="math inline">\(Y\)</span>의 평균이 얼마나 변하는지를 나타낸다.</p>
+<p>예를 들어 <span class="math inline">\(X_1\)</span>이 TV 광고비라면, <span class="math inline">\(\theta_1\)</span>은 Radio와 Newspaper 광고비가 고정되어 있을 때 TV 광고비가 Sales에 미치는 평균적인 효과를 의미한다.</p>
+<p>선형회귀는 예측뿐 아니라 해석에도 유용하다. 다만 실제 관계가 정확히 선형일 필요는 없으며, 선형회귀는 복잡한 관계를 단순한 선형 함수로 근사하는 모형이다.</p>
+</section>
+<section id="training-data" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="training-data"><span class="header-section-number">3.2</span> Training data</h2>
+<p>주어진 데이터가</p>
+<p><span class="math display">\[
+(x_1,y_1), (x_2,y_2), \ldots, (x_N,y_N)
+\]</span></p>
+<p>이라고 하자. 여기서 <span class="math inline">\(x_i=(x_{i1},\ldots,x_{ip})\)</span>는 <span class="math inline">\(i\)</span>번째 입력 변수 벡터이고, <span class="math inline">\(y_i\)</span>는 해당 반응 변수 값이다.</p>
+<p>각 관측값에 대해 선형회귀모형은 다음과 같이 쓸 수 있다.</p>
+<p><span class="math display">\[
+y_i
+=
+\theta_0
++
+\theta_1 x_{i1}
++
+\cdots
++
+\theta_p x_{ip}
++
+\epsilon_i,
+\qquad i=1,\ldots,N.
+\]</span></p>
+<p>선형회귀의 목표는 데이터를 이용하여 미지의 parameter <span class="math inline">\(\theta_0,\theta_1,\ldots,\theta_p\)</span>를 추정하는 것이다.</p>
+</section>
+<section id="fitted-model" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="fitted-model"><span class="header-section-number">3.3</span> Fitted model</h2>
+<p>추정된 parameter를 <span class="math inline">\(\hat\theta_0,\hat\theta_1,\ldots,\hat\theta_p\)</span>라고 쓰면, 학습된 선형회귀모형은 다음과 같다.</p>
+<p><span class="math display">\[
+\hat y
+=
+\hat\theta_0
++
+\hat\theta_1 x_1
++
+\cdots
++
+\hat\theta_p x_p.
+\]</span></p>
+<p>즉, 새로운 입력값 <span class="math inline">\(x=(x_1,\ldots,x_p)\)</span>가 주어지면 위 식을 이용하여 <span class="math inline">\(Y\)</span>의 예측값 <span class="math inline">\(\hat y\)</span>를 계산한다.</p>
+</section>
+<section id="least-squares-estimation" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="least-squares-estimation"><span class="header-section-number">3.4</span> Least squares estimation</h2>
+<p>선형회귀에서는 보통 실제값 <span class="math inline">\(y_i\)</span>와 예측값 <span class="math inline">\(\hat y_i\)</span>의 차이가 작아지도록 parameter를 추정한다.</p>
+<p>가장 대표적인 방법은 mean squared error, 즉 MSE를 최소화하는 것이다.</p>
+<p><span class="math display">\[
+\mathrm{MSE}(\theta)
+=
+\frac{1}{N}
+\sum_{i=1}^N
+\left(
+y_i
+-
+\theta_0
+-
+\theta_1 x_{i1}
+-
+\cdots
+-
+\theta_p x_{ip}
+\right)^2.
+\]</span></p>
+<p>따라서 선형회귀의 학습은 다음 최적화 문제로 표현된다.</p>
+<p><span class="math display">\[
+\hat\theta
+=
+\arg\min_{\theta}
+\frac{1}{N}
+\sum_{i=1}^N
+\left(
+y_i
+-
+\theta_0
+-
+\theta_1 x_{i1}
+-
+\cdots
+-
+\theta_p x_{ip}
+\right)^2.
+\]</span></p>
+<p>여기서 <span class="math inline">\(\hat\theta\)</span>는 MSE를 가장 작게 만드는 parameter의 추정값이다.</p>
+</section>
+<section id="matrix-notation" class="level2" data-number="3.5">
+<h2 data-number="3.5" class="anchored" data-anchor-id="matrix-notation"><span class="header-section-number">3.5</span> Matrix notation</h2>
+<p>선형회귀모형은 행렬을 이용하면 더 간단하게 표현할 수 있다.</p>
+<p>앞서 모형에는 절편 <span class="math inline">\(\theta_0\)</span>가 포함되어 있으므로, 각 관측값의 입력 벡터 앞에 항상 1을 추가한다. 즉,</p>
+<p><span class="math display">\[
+x_{i0}=1
+\]</span></p>
+<p>로 두고, <span class="math inline">\(i\)</span>번째 관측값을 다음과 같이 나타낸다.</p>
+<p><span class="math display">\[
+x_i
+=
+\begin{pmatrix}
+x_{i0} \\
+x_{i1} \\
+\vdots \\
+x_{ip}
+\end{pmatrix}
+=
+\begin{pmatrix}
+1 \\
+x_{i1} \\
+\vdots \\
+x_{ip}
+\end{pmatrix}.
+\]</span></p>
+<p>전체 데이터에 대해 design matrix <span class="math inline">\(\mathbf X_b\)</span>를 다음과 같이 정의한다.</p>
+<p><span class="math display">\[
+\mathbf{X}_b
+=
+\begin{bmatrix}
+1 &amp; x_{11} &amp; \cdots &amp; x_{1p}\\
+1 &amp; x_{21} &amp; \cdots &amp; x_{2p}\\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; x_{N1} &amp; \cdots &amp; x_{Np}
+\end{bmatrix}.
+\]</span></p>
+<p>또한 parameter vector와 response vector를 각각</p>
+<p><span class="math display">\[
+\theta
+=
+\begin{pmatrix}
+\theta_0 \\
+\theta_1 \\
+\vdots \\
+\theta_p
+\end{pmatrix},
+\qquad
+y
+=
+\begin{pmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_N
+\end{pmatrix}
+\]</span></p>
+<p>라고 두면, 선형회귀모형은 다음과 같이 간단히 쓸 수 있다.</p>
+<p><span class="math display">\[
+y
+=
+\mathbf X_b \theta
++
+\epsilon.
+\]</span></p>
+<p>추정된 parameter를 <span class="math inline">\(\hat\theta\)</span>라고 하면 예측값 벡터는</p>
+<p><span class="math display">\[
+\hat y
+=
+\mathbf X_b \hat\theta
+\]</span></p>
+<p>로 표현된다.</p>
+</section>
+<section id="정규방정식" class="level2" data-number="3.6">
+<h2 data-number="3.6" class="anchored" data-anchor-id="정규방정식"><span class="header-section-number">3.6</span> 정규방정식</h2>
+<p>선형회귀에서는 MSE를 최소화하는 parameter를 찾는다. 행렬 표현을 사용하면 이 문제는 다음과 같이 쓸 수 있다.</p>
+<p><span class="math display">\[
+\hat{\boldsymbol{\theta}}
+=
+\arg\min_{\boldsymbol{\theta}}
+\frac{1}{N}
+\left\|
+\mathbf y - \mathbf X_b \boldsymbol{\theta}
+\right\|^2.
+\]</span></p>
+<p>이 최적화 문제의 해는 다음과 같이 주어진다.</p>
+<p><span class="math display">\[
+\hat{\boldsymbol{\theta}}
+=
+(\mathbf X_b^{\top}\mathbf X_b)^{-1}
+\mathbf X_b^{\top}
+\mathbf y.
+\]</span></p>
+<p>이를 <strong>정규방정식(normal equation)</strong> 이라고 한다.</p>
+<ul>
+<li><p>여기서 <span class="math inline">\(\mathbf X_b\)</span>는 절편항을 포함한 matrix이고, <span class="math inline">\(\mathbf y\)</span>는 반응 변수 벡터이다.</p></li>
+<li><p>또한 <span class="math inline">\(\mathbf X_b^{\top}\)</span>는 <span class="math inline">\(\mathbf X_b\)</span>의 전치행렬(transpose), <span class="math inline">\((\mathbf X_b^{\top}\mathbf X_b)^{-1}\)</span>는 <span class="math inline">\(\mathbf X_b^{\top}\mathbf X_b\)</span>의 역행렬(inverse matrix)을 의미한다.</p></li>
+</ul>
+<p>이제 <code>numpy</code>를 이용하여 정규방정식을 직접 계산해 보자.</p>
+<p>가상의 데이터는 다음 선형 모형에서 생성한다고 하자.</p>
+<p><span class="math display">\[
+Y = 4 + 3X + \epsilon.
+\]</span></p>
+<p>즉, 실제 절편은 <span class="math inline">\(4\)</span>, 기울기는 <span class="math inline">\(3\)</span>이다. 여기에 랜덤 오차 <span class="math inline">\(\epsilon\)</span>을 더하여 관측값을 생성한다.</p>
+<p>아래 코드에서 <code>np.random.rand(100, 1)</code>은 0과 1 사이의 uniform 분포에서 shape이 <code>(100, 1)</code>인 랜덤 샘플을 생성한다.<br>
+또한 <code>np.random.randn(100, 1)</code>은 표준정규분포에서 shape이 <code>(100, 1)</code>인 랜덤 샘플을 생성한다.</p>
+<div id="cell-3" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-4" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 가상의 데이터 생성</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> np.random.rand(<span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> <span class="dv">4</span> <span class="op">+</span> <span class="dv">3</span> <span class="op">*</span> X <span class="op">+</span> np.random.randn(<span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 모든 샘플에 x0 = 1 추가</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co"># c_ 는 column 방향으로 stacking</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>Xb <span class="op">=</span> np.c_[np.ones((<span class="dv">100</span>, <span class="dv">1</span>)), X]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><a href="https://pandas.pydata.org/"><code>pandas</code></a>는 데이터 분석을 위한 라이브러리로 아래 코드에서는 <code>Xb</code>의 내용을 출력해 보기 위해 사용하였다.</p>
+<div id="cell-6" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(Xb)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">0</th>
+<th data-quarto-table-cell-role="th">1</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>1.0</td>
+<td>1.163440</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>1.0</td>
+<td>0.905596</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>1.0</td>
+<td>0.972488</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>1.0</td>
+<td>1.952639</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>1.0</td>
+<td>0.324309</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">...</th>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">95</th>
+<td>1.0</td>
+<td>1.386199</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">96</th>
+<td>1.0</td>
+<td>1.436618</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">97</th>
+<td>1.0</td>
+<td>1.289823</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">98</th>
+<td>1.0</td>
+<td>1.432072</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">99</th>
+<td>1.0</td>
+<td>0.651778</td>
+</tr>
+</tbody>
+</table>
+
+<p>100 rows × 2 columns</p>
+</div>
+</div>
+</div>
+<p>정규방정식을 계산하기 위해 다음의 코드를 활용하였다.</p>
+<ul>
+<li><code>.T</code> : 전치(transpose)를 구하기 위해 사용됨</li>
+<li><code>.dot()</code> : 행렬과 행렬의 곱, 혹은 행렬과 벡터의 곱을 위해 사용됨.
+<ul>
+<li>아래에서는 numpy array의 메소드로 활용되었으나 함수인 <code>np.dot()</code>을 이용할 수도 있음</li>
+</ul></li>
+<li><code>np.linalg.inv()</code> : 역행렬을 구하는 함수</li>
+</ul>
+<div id="cell-8" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>theta_best <span class="op">=</span> np.linalg.inv(Xb.T.dot(Xb)).dot(Xb.T).dot(Y)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>theta_best</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>array([[3.99412396],
+       [2.85209684]])</code></pre>
+</div>
+</div>
+<p>혹은 <code>@</code>를 이용하여 더 간단히 나타낼 수 있다.</p>
+<div id="cell-10" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>np.linalg.inv(Xb.T <span class="op">@</span> Xb) <span class="op">@</span> Xb.T <span class="op">@</span> Y</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>array([[3.99412396],
+       [2.85209684]])</code></pre>
+</div>
+</div>
+<p>이렇게 추정한 추정치 <span class="math inline">\(\hat \theta\)</span>를 BLUE (Best Linear Unbiased Estimator)라고도 부른다.</p>
+</section>
+<section id="sklearn.linear_model.linearregression" class="level2" data-number="3.7">
+<h2 data-number="3.7" class="anchored" data-anchor-id="sklearn.linear_model.linearregression"><span class="header-section-number">3.7</span> <a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html"><code>sklearn.linear_model.LinearRegression</code></a></h2>
+<p><code>sklearn</code>을 이용하는 방법도 살펴보자.</p>
+<p><code>sklearn.linear_model</code>이라는 서브 모듈로부터 <code>LinearRegression</code> 클래스를 import한다.</p>
+<div id="cell-13" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>lin_reg <span class="op">=</span> LinearRegression()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>lin_reg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<style>#sk-container-id-1 {color: black;}#sk-container-id-1 pre{padding: 0;}#sk-container-id-1 div.sk-toggleable {background-color: white;}#sk-container-id-1 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-1 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-1 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-1 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-1 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-1 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-1 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-1 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-1 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-1 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-1 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-1 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-1 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-1 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-1 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-1 div.sk-item {position: relative;z-index: 1;}#sk-container-id-1 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-1 div.sk-item::before, #sk-container-id-1 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-1 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-1 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-1 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-1 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-1 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-1 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-1 div.sk-label-container {text-align: center;}#sk-container-id-1 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-1 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-1" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>LinearRegression()</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-1" type="checkbox" checked=""><label for="sk-estimator-id-1" class="sk-toggleable__label sk-toggleable__label-arrow">LinearRegression</label><div class="sk-toggleable__content"><pre>LinearRegression()</pre></div></div></div></div></div>
+</div>
+</div>
+<p><code>sklearn</code>의 대부분의 모형들은 모형 적합을 위해 <code>.fit</code> method를 이용한다.</p>
+<p>추정 결과는 <code>.fit()</code> 적용 후에 instance의 attribute인 <code>intercept_</code>와 <code>coef_</code>에 access하여 얻는다.</p>
+<ul>
+<li><p><code>coef_</code>는 <code>(n_features, )</code> 혹은 <code>(n_targets, n_features)</code>의 shape을 가진 numpy array이로서 <span class="math inline">\(\theta_1, \cdots, \theta_p\)</span>의 추정치를 나타낸다.</p></li>
+<li><p><code>intercept_</code>는 <code>(n_targets,)</code>의 shape을 지닌 array로서 <span class="math inline">\(\theta_0\)</span>의 추정치를 나타낸다.</p></li>
+</ul>
+<div id="cell-15" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># fitting은 간단히 다음으로 이루어진다.</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>lin_reg.fit(X <span class="op">=</span> X, y <span class="op">=</span> Y)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>lin_reg.intercept_, lin_reg.coef_</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>(array([3.99412396]), array([[2.85209684]]))</code></pre>
+</div>
+</div>
+<section id="mse-비용함수와-선형회귀에서의-최적화" class="level3" data-number="3.7.1">
+<h3 data-number="3.7.1" class="anchored" data-anchor-id="mse-비용함수와-선형회귀에서의-최적화"><span class="header-section-number">3.7.1</span> MSE 비용함수와 선형회귀에서의 최적화</h3>
+<p>위의 정규 방정식은 이론적으로 다음의 비용함수를 최소화하는 값이다.</p>
+<p><span class="math display">\[ \mathrm{MSE}(\boldsymbol{\theta}) = \frac{1}{N} \sum_{i=1}^{N} (x_i \cdot \boldsymbol{\theta} - y_i)^2 \]</span></p>
+<ul>
+<li><p>여기서 <span class="math inline">\(\cdot\)</span> 은 벡터 내적이며, $x_i = x_i^{} $이다.</p></li>
+<li><p><span class="math inline">\(x_i\)</span>는 <span class="math inline">\(\mathbf X_b\)</span>의 <span class="math inline">\(i\)</span>번째 행 벡터</p></li>
+</ul>
+<p>위 식은 MSE (Mean Squared Error) 비용함수라고 불리우며, 실제값과 예측값 차이의 제곱을 손실함수 (<span class="math inline">\(L_2\)</span> 손실함수)로 하여 이들의 합을 최소화하는 <span class="math inline">\(\boldsymbol{\theta}\)</span>를 찾는 것을 목적으로 한다.</p>
+<p><span class="math inline">\(\boldsymbol{\theta} = \begin{bmatrix}\theta_0  &amp; \theta_1 &amp;  \cdots &amp;  \theta_p \end{bmatrix}^{\top}\)</span>이기 때문에, <span class="math inline">\(\mathrm{MSE}(\boldsymbol{\theta})\)</span>는 실제로 <span class="math inline">\(\theta_0, \theta_1,  \cdots,  \theta_p\)</span>의 함수임을 주목하자.</p>
+<p>또한, <span class="math inline">\(\mathrm{MSE}(\boldsymbol{\theta})\)</span>는 관찰값 <span class="math inline">\(\mathbf{X}_b, \mathbf{y}\)</span>에 따라 달라진다.</p>
+<p>기계학습의 많은 방법들은 적절한 비용함수를 정의하고 이 비용함수를 최소화하는 <span class="math inline">\(\boldsymbol{\theta}\)</span>를 추정량으로 삼는다.</p>
+<p>모형에 따라 선형회귀 방법처럼 해석적인 솔루션을 제공하는 경우도 있지만, 많은 경우 경사하강법과 같은 수치적 방법을 통해 근사값을 찾아낸다.</p>
+<p>연습삼아 경사하강법을 선형회귀 모형에 적용해 보자.</p>
+</section>
+</section>
+<section id="경사하강법-gd-gradient-descent" class="level2" data-number="3.8">
+<h2 data-number="3.8" class="anchored" data-anchor-id="경사하강법-gd-gradient-descent"><span class="header-section-number">3.8</span> 경사하강법 (GD, Gradient Descent)</h2>
+<p>경사하강법은 여러 기계학습의 방법론에서 최적의 해를 찾는 일반적인 방법이다.</p>
+<p>비용함수, 예를 들어 앞에서 제시한 <span class="math inline">\(\mathrm{MSE}(\boldsymbol{\theta})\)</span>는 주어진 관찰값 <span class="math inline">\(\mathbf{X}_b, \mathbf{y}\)</span>이 있을 때, <span class="math inline">\(\theta_0, \theta_1,  \cdots,  \theta_p\)</span>의 함수이다.</p>
+<p>비용함수의 형태에 따라 <span class="math inline">\(\mathrm{MSE}(\boldsymbol{\theta})\)</span>의 <span class="math inline">\(\theta_0, \theta_1,  \cdots,  \theta_p\)</span>에 대한 기울기를 이론적으로 계산할 수도 있고, 함수의 형태가 복잡할 경우 수치적으로 계산할 수도 있다.</p>
+<p>경사하강법은 계산된 기울기를 바탕으로 비용함수의 값이 감소하는 방향을 따라 비용함수를 최소화하는 극소 지점을 향해 조금씩 이동하는 방법이다.</p>
+<p>모수가 여러 개인 경우, 각 모수(<span class="math inline">\(\theta\)</span>)들에 대해 비용함수의 기울기들을 계산할 수 있는데 이 기울기들을 모아놓은 벡터를 그레디언트 벡터라고 한다.</p>
+<p>그레디언트 벡터는 <span class="math inline">\(\nabla\)</span> 혹은 <span class="math inline">\(\nabla_{\boldsymbol{\theta}}\)</span>로 표현한다.</p>
+<p>따라서 <span class="math inline">\(\mathrm{MSE}(\boldsymbol{\theta})\)</span>의 그레디언트 벡터는</p>
+<p><span class="math display">\[
+\nabla_{\boldsymbol{\theta}} \mathrm{MSE} (\boldsymbol{\theta}) = \begin{bmatrix} \frac{\partial}{\partial \theta_0} \mathrm{MSE}(\boldsymbol{\theta}) \\ \frac{\partial}{\partial \theta_1} \mathrm{MSE}(\boldsymbol{\theta}) \\ \vdots \\ \frac{\partial}{\partial \theta_p} \mathrm{MSE}(\boldsymbol{\theta}) \end{bmatrix}
+\]</span></p>
+<p>와 같이 표현할 수 있다.</p>
+<p>여기서 <span class="math display">\[ \frac{\partial}{\partial \theta_j} \mathrm{MSE}(\boldsymbol{\theta})\]</span>는 편미분이며 다른 변수들을 고정한 후, <span class="math inline">\(\mathrm{MSE}(\boldsymbol{\theta})\)</span>를 <span class="math inline">\(\theta_j\)</span>로 미분하였음을 의미한다.</p>
+<section id="선형회귀모형의-graident-vector" class="level3" data-number="3.8.1">
+<h3 data-number="3.8.1" class="anchored" data-anchor-id="선형회귀모형의-graident-vector"><span class="header-section-number">3.8.1</span> 선형회귀모형의 graident vector</h3>
+<p>위에서 언급함 비용함수 <span class="math display">\[ \mathrm{MSE}(\boldsymbol{\theta}) = \frac{1}{N} \sum_{i=1}^{N} (x_i \cdot \boldsymbol{\theta} - y_i)^2 \]</span> 를 고려하자.</p>
+<p><span class="math display">\[ x_i \cdot \boldsymbol{\theta} = \theta_0 + x_{i1} \theta_1 + \cdots +  x_{ip} \theta_p,\]</span> 이므로, <span class="math display">\[ \frac{\partial }{\partial \theta_j} (x_i \cdot \boldsymbol{\theta} - y_i)^2 = 2 (x_i \cdot \boldsymbol{\theta} - y_i) x_{ij}\]</span> 를 얻는다.</p>
+<p>위의 관계를 이용하면, <span class="math display">\[\begin{align*}
+\frac{\partial }{\partial \theta_j} \mathrm{MSE}(\boldsymbol{\theta}) &amp;= \frac{2}{N} \sum_{i=1}^{N} (x_i \cdot \boldsymbol{\theta} - y_i) x_{ij} \\
+&amp; = \frac{2}{N} \begin{bmatrix} x_{1j} &amp; \cdots  &amp; x_{Nj} \end{bmatrix}
+\begin{bmatrix} x_1 \cdot \boldsymbol{\theta} - y_1 \\ \vdots \\ x_N \cdot \boldsymbol{\theta} - y_N \end{bmatrix} \\
+&amp; = \frac{2}{N} \begin{bmatrix} x_{1j} &amp; \cdots  &amp; x_{Nj} \end{bmatrix}
+\left( \begin{bmatrix} x_1 \cdot \boldsymbol{\theta}  \\ \vdots \\ x_N \cdot \boldsymbol{\theta}  \end{bmatrix} - \begin{bmatrix} y_{1} \\ \vdots \\ y_N\end{bmatrix}  \right)\\
+&amp; = \frac{2}{N} \begin{bmatrix} x_{1j} &amp; \cdots  &amp; x_{Nj} \end{bmatrix}
+\left( \begin{bmatrix} x_{10} &amp; \cdots &amp; x_{1p}  \\ \vdots &amp;  &amp; \vdots \\ x_{N0} &amp; \cdots &amp; x_{Np}   \end{bmatrix}  \boldsymbol{\theta} - \begin{bmatrix} y_{1} \\ \vdots \\ y_N\end{bmatrix}  \right)\\
+&amp; = \frac{2}{N} \mathbf x_j^{\top} (\mathbf X_b \boldsymbol{\theta} - \mathbf y).
+\end{align*}\]</span> 이다.</p>
+<p>따라서 gradient vector는 다음으로 나타난다. <span class="math display">\[\begin{equation*}
+\nabla_{\boldsymbol{\theta}} \mathrm{MSE} (\boldsymbol{\theta}) = \begin{bmatrix} \frac{\partial}{\partial \theta_0} \mathrm{MSE}(\boldsymbol{\theta}) \\ \frac{\partial}{\partial \theta_1} \mathrm{MSE}(\boldsymbol{\theta}) \\ \vdots \\ \frac{\partial}{\partial \theta_p} \mathrm{MSE}(\boldsymbol{\theta}) \end{bmatrix}
+= \frac{2}{N} \begin{bmatrix} \mathbf x_0^{\top} (\mathbf{X}_b \boldsymbol{\theta}- \mathbf y) \\ \mathbf x_1^{\top} (\mathbf X_b \boldsymbol{\theta} - \mathbf y) \\ \vdots \\  \mathbf x_p^{\top} (\mathbf X_b \boldsymbol{\theta} - \mathbf y) \end{bmatrix} = \frac{2}{N} \mathbf X_b^{\top} (\mathbf X_b \boldsymbol{\theta} - \mathbf y).
+\end{equation*}\]</span></p>
+</section>
+<section id="학습률과-경사-하강" class="level3" data-number="3.8.2">
+<h3 data-number="3.8.2" class="anchored" data-anchor-id="학습률과-경사-하강"><span class="header-section-number">3.8.2</span> 학습률과 경사 하강</h3>
+<p>적절한 학습률 <span class="math inline">\(\eta\)</span>에 대해 내려가는 스텝의 크기는 <span class="math inline">\(\eta \nabla_{\boldsymbol{\theta}} \mathrm{MSE} (\boldsymbol{\theta})\)</span>로 정한다.</p>
+<p>따라서 현재의 <span class="math inline">\(\boldsymbol{\theta}\)</span>에서 다음 스텝에서의 <span class="math inline">\(\boldsymbol{\theta}^{\text{(next step)}}\)</span>는 다음과 같다.</p>
+<p><span class="math display">\[ \boldsymbol{\theta}^{\text{(next step)}} = \boldsymbol{\theta} - \eta \nabla_{\boldsymbol{\theta}} \mathrm{MSE} (\boldsymbol{\theta}) \]</span></p>
+<p>그레디언트 벡터는 올라가는 방향이기 때문에 비용함수의 극소점을 향해 내려가기 위해서는 <span class="math inline">\(-\)</span>를 취한 것을 볼 수 있다.</p>
+<p>학습률 <span class="math inline">\(\eta\)</span>가 크면 더 빠르게 극소점을 향해 갈 것이고, <span class="math inline">\(\eta\)</span>가 작으면 천천히 향해 갈 것이다.</p>
+<p>그러나 학습률이 너무 크면, 극소점을 건너 뛰어 제대로 수렴하지 못할 수도 있다.</p>
+<p>많은 경우 비용함수의 정확한 형태를 모르기 때문에 적절한 <span class="math inline">\(\eta\)</span>를 설정하는 것은 반복적인 trial and error를 통해 결정할 수 밖에 없다.</p>
+<p>경사 하강법은 다시 몇 가지로 분류된다.</p>
+</section>
+<section id="배치-경사-하강법" class="level3" data-number="3.8.3">
+<h3 data-number="3.8.3" class="anchored" data-anchor-id="배치-경사-하강법"><span class="header-section-number">3.8.3</span> 배치 경사 하강법</h3>
+<p>경사 하강법을 구현하려면 앞서 살펴 보았던 gradient vector를 매 스텝마다 계산하여야 한다.</p>
+<p>만약 gradient vector를 계산할 때 모든 훈련 데이터를 이용한다면 이를 배치 경사 하강법 (batch gradient descent)이라고 한다.</p>
+<p>만약 훈련 세트가 매우 크다면 gradient vector를 계산하는데 시간이 오래 걸릴 것이다.</p>
+<p>위의 선형회귀 모형에 경사하강법 알고리즘을 적용해 보자.</p>
+<p><code>np.random.randn</code>는 표준 정규 분포를 따르는 랜덤값을 생성하는데, 이를 이용하여 경사 하강법의 초기값을 임의로 지정할 것이다.</p>
+<div id="cell-21" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> np.random.randn(<span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>temp</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<pre><code>array([[ 1.48805307],
+       [-0.44258416]])</code></pre>
+</div>
+</div>
+<p>아래 코드에서 <code>np.ravel</code>는 해당 array의 모든 차원을 없애 일차원 array로 바꾼다.</p>
+<div id="cell-23" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>np.ravel(temp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>array([ 1.48805307, -0.44258416])</code></pre>
+</div>
+</div>
+<div id="cell-24" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>eta <span class="op">=</span> <span class="fl">0.1</span> <span class="co"># 학습률</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>n_iteration <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="bu">len</span>(Y)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.random.randn(<span class="dv">2</span>, <span class="dv">1</span>)  <span class="co">#무작위 초기화</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>evolution <span class="op">=</span> np.ravel(theta)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(n_iteration):</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    grad <span class="op">=</span> <span class="dv">2</span> <span class="op">/</span> N <span class="op">*</span> Xb.T <span class="op">@</span> (Xb <span class="op">@</span> theta <span class="op">-</span> Y)</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># update theta</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    theta <span class="op">=</span> theta <span class="op">-</span> eta <span class="op">*</span> grad</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    evolution <span class="op">=</span> np.vstack((evolution, np.ravel(theta)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>추정치의 값이 어디로 수렴하였는지 확인해 보자.</p>
+<div id="cell-26" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>theta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>array([[3.82686917],
+       [2.98539691]])</code></pre>
+</div>
+</div>
+<p>수렴 경로를 살펴 보자.</p>
+<div id="cell-28" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>evolution</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<pre><code>array([[-2.28471615, -0.13843273],
+       [-0.37684951,  2.12729183],
+       [ 0.65539222,  3.29770734],
+       [ 1.22597117,  3.89213392],
+       [ 1.5528169 ,  4.1839273 ],
+       [ 1.7506666 ,  4.3169675 ],
+       [ 1.87993635,  4.3669787 ],
+       [ 1.97244697,  4.37380812],
+       [ 2.04496628,  4.35841763],
+       [ 2.1063377 ,  4.33182822],
+       [ 2.16123277,  4.2998283 ],
+       [ 2.21212656,  4.2654522 ],
+       [ 2.26033746,  4.23028483],
+       [ 2.30657458,  4.19514843],
+       [ 2.35122593,  4.1604641 ],
+       [ 2.39451009,  4.1264421 ],
+       [ 2.43655607,  4.09318198],
+       [ 2.47744537,  4.0607253 ],
+       [ 2.51723414,  4.02908341],
+       [ 2.55596482,  3.99825199],
+       [ 2.59367229,  3.96821878],
+       [ 2.63038714,  3.93896759],
+       [ 2.66613738,  3.91048039],
+       [ 2.70094934,  3.88273848],
+       [ 2.73484815,  3.855723  ],
+       [ 2.76785805,  3.82941528],
+       [ 2.80000249,  3.80379695],
+       [ 2.83130424,  3.77885005],
+       [ 2.86178542,  3.75455703],
+       [ 2.89146757,  3.73090077],
+       [ 2.92037164,  3.7078646 ],
+       [ 2.94851804,  3.68543227],
+       [ 2.97592663,  3.66358796],
+       [ 3.00261676,  3.64231625],
+       [ 3.02860726,  3.62160214],
+       [ 3.05391646,  3.60143101],
+       [ 3.07856223,  3.58178862],
+       [ 3.10256195,  3.56266113],
+       [ 3.12593257,  3.54403502],
+       [ 3.14869057,  3.52589717],
+       [ 3.17085202,  3.50823476],
+       [ 3.19243254,  3.49103534],
+       [ 3.21344737,  3.47428677],
+       [ 3.23391134,  3.45797724],
+       [ 3.25383888,  3.44209522],
+       [ 3.27324406,  3.42662953],
+       [ 3.29214056,  3.41156924],
+       [ 3.31054174,  3.39690372],
+       [ 3.32846056,  3.38262264],
+       [ 3.34590967,  3.3687159 ],
+       [ 3.36290139,  3.35517371],
+       [ 3.3794477 ,  3.34198649],
+       [ 3.39556028,  3.32914496],
+       [ 3.4112505 ,  3.31664004],
+       [ 3.42652943,  3.30446292],
+       [ 3.44140785,  3.29260499],
+       [ 3.45589626,  3.2810579 ],
+       [ 3.47000488,  3.2698135 ],
+       [ 3.48374368,  3.25886384],
+       [ 3.49712234,  3.24820121],
+       [ 3.5101503 ,  3.23781808],
+       [ 3.52283675,  3.22770713],
+       [ 3.53519066,  3.21786121],
+       [ 3.54722073,  3.20827339],
+       [ 3.55893546,  3.19893689],
+       [ 3.57034311,  3.18984513],
+       [ 3.58145172,  3.1809917 ],
+       [ 3.59226915,  3.17237034],
+       [ 3.60280301,  3.16397497],
+       [ 3.61306076,  3.15579967],
+       [ 3.62304961,  3.14783868],
+       [ 3.63277662,  3.14008636],
+       [ 3.64224866,  3.13253726],
+       [ 3.65147241,  3.12518604],
+       [ 3.66045438,  3.11802752],
+       [ 3.6692009 ,  3.11105665],
+       [ 3.67771814,  3.10426851],
+       [ 3.68601213,  3.0976583 ],
+       [ 3.6940887 ,  3.09122137],
+       [ 3.70195356,  3.08495317],
+       [ 3.70961225,  3.07884928],
+       [ 3.71707019,  3.07290539],
+       [ 3.72433263,  3.06711731],
+       [ 3.7314047 ,  3.06148096],
+       [ 3.7382914 ,  3.05599235],
+       [ 3.74499756,  3.05064761],
+       [ 3.75152794,  3.04544298],
+       [ 3.75788714,  3.04037477],
+       [ 3.76407964,  3.03543942],
+       [ 3.77010982,  3.03063344],
+       [ 3.77598193,  3.02595344],
+       [ 3.78170011,  3.02139612],
+       [ 3.7872684 ,  3.01695826],
+       [ 3.79269073,  3.01263672],
+       [ 3.79797093,  3.00842847],
+       [ 3.80311271,  3.00433053],
+       [ 3.80811971,  3.00034002],
+       [ 3.81299546,  2.9964541 ],
+       [ 3.8177434 ,  2.99267005],
+       [ 3.82236689,  2.98898518],
+       [ 3.82686917,  2.98539691]])</code></pre>
+</div>
+</div>
+<p>Visualization을 통해, 추정의 과정을 살펴보자.<br>
+이를 위해 <code>MSE</code> 함수를 먼저 정의하겠다.</p>
+<p><span class="math display">\[ \mathrm{MSE}(\boldsymbol{\theta}) = \frac{1}{N} \sum_{i=1}^{N} (x_i \cdot \boldsymbol{\theta} - y_i)^2 \]</span></p>
+<div id="cell-30" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define MSE</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> MSE(theta, X, y):</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    mse <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(X.shape[<span class="dv">0</span>]):</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        mse <span class="op">=</span> mse <span class="op">+</span> (X[i,:].T <span class="op">@</span> theta <span class="op">-</span> y[i]) <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> mse <span class="op">/</span> X.shape[<span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>아래 코드에서 2-D plot을 위해 <code>meshgrid</code> 함수가 이용되는데, 보통 n-dimensional function을 계산하는데 사용된다.<br>
+예를 들어,</p>
+<div id="cell-32" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>xx <span class="op">=</span> np.array([<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>yy <span class="op">=</span> np.array([<span class="op">-</span><span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>])</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>XX, YY <span class="op">=</span> np.meshgrid(xx, yy)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-33" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>XX</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
+<pre><code>array([[-1,  0,  1],
+       [-1,  0,  1],
+       [-1,  0,  1]])</code></pre>
+</div>
+</div>
+<div id="cell-34" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>YY</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<pre><code>array([[-2, -2, -2],
+       [ 0,  0,  0],
+       [ 2,  2,  2]])</code></pre>
+</div>
+</div>
+<div id="cell-35" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>ZZ <span class="op">=</span> (XX <span class="op">+</span> YY) <span class="op">**</span> <span class="dv">2</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>ZZ</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<pre><code>array([[9, 4, 1],
+       [1, 0, 1],
+       [1, 4, 9]])</code></pre>
+</div>
+</div>
+<div id="cell-36" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with visualization</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>theta0 <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">100</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>theta1 <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">100</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>Theta0, Theta1 <span class="op">=</span> np.meshgrid(theta0, theta1)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> np.zeros_like(Theta1)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(Z.shape[<span class="dv">0</span>]):</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(Z.shape[<span class="dv">1</span>]):</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>        Z[i,j] <span class="op">=</span> MSE([Theta0[i,j], Theta1[i,j]], Xb, Y)[<span class="dv">0</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-37" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize <span class="op">=</span> (<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">#contour plot for MSE</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>contours <span class="op">=</span> plt.contour(Theta0, Theta1, Z, levels <span class="op">=</span> <span class="dv">40</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>theta_optimal <span class="op">=</span> np.linalg.inv(Xb.T <span class="op">@</span> Xb) <span class="op">@</span> Xb.T <span class="op">@</span> Y</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>plt.plot(theta_optimal[<span class="dv">0</span>], theta_optimal[<span class="dv">1</span>], <span class="st">'k*'</span>, markersize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a><span class="co"># line plot for estimation procedure</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>plt.plot(evolution[:,<span class="dv">0</span>], evolution[:,<span class="dv">1</span>], <span class="st">".-"</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>plt.colorbar(contours)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="vs">r"</span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta_0</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="vs">r"</span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta_1</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03. Linear regression_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="확률적-경사-하강법" class="level3" data-number="3.8.4">
+<h3 data-number="3.8.4" class="anchored" data-anchor-id="확률적-경사-하강법"><span class="header-section-number">3.8.4</span> 확률적 경사 하강법</h3>
+<p>확률적 경사 하강법 (stochastic gradient decent)에서는 매 스텝에서 샘플의 one observation을 무작위로 선택하고 그 하나의 샘플에 대한 그레디언트를 계산한다.</p>
+<p>장점</p>
+<ul>
+<li><p>매 스텝에서의 그레디언트 계산이 빠르다.</p></li>
+<li><p>매 반복에서 하나의 샘플만 취하면 되므로, 매우 큰 훈련 데이터도 학습 가능하다.</p></li>
+</ul>
+<p>단점</p>
+<ul>
+<li><p>샘플은 무작위로 선택되므로 배치 경사 하강법보다 불안정하다.</p></li>
+<li><p>비용함수가 최소값에 이를 때까지 요동치며 접근하며, 최소값에 완전히 안착하지 못한다.</p></li>
+</ul>
+<p>하지만, 마지막 단점은 오히려 장점이 되기도 한다.</p>
+<ul>
+<li>비용함수의 형태가 불규칙할 경우 지역 극소값을 건너뛸 수도 있기 때문.</li>
+<li>반면 배치 경사하강법은 지역 극소값에 도달시 빠져나오지 못해 전역 극소값으로 가지 못한다.</li>
+</ul>
+<p>한편, sample을 선택할 때, 비복원 추출을 하며, 이에 따라 데이터의 개수만큼 스텝이 진행되면 모든 샘플들이 한 번씩 선택된다.</p>
+<ul>
+<li><p>이 하나의 과정을 <strong>epoch</strong> 라고 부른다.</p></li>
+<li><p>통상적으로 여러 번의 epoch를 수행한다.</p></li>
+</ul>
+<p>단점을 극복하기 위해, 최소값에 도달하게 하기 위해서 학습률을 점진적으로 감소시키는 기법이 있다.</p>
+<ul>
+<li>매 반복에서 학습률을 결정하는 함수를 학습 스케쥴이라고 한다.</li>
+</ul>
+<p>아래 코드에서는 이를 간단히 구현하였다.</p>
+<ul>
+<li>learning rate을 보다 정교하게 주관하는 함수 <code>leargning_schedule</code>를 정의하였다.</li>
+</ul>
+<div id="cell-40" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>t0, t1 <span class="op">=</span> <span class="dv">5</span>, <span class="dv">100</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> learning_schedule(t):</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> t0 <span class="op">/</span> (t <span class="op">+</span> t1)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>그림을 그려보면 다음과 같다.</p>
+<div id="cell-42" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize <span class="op">=</span> (<span class="dv">6</span>, <span class="dv">4</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>plt.plot(np.arange(<span class="dv">0</span>,<span class="dv">1000</span>,<span class="dv">1</span>), learning_schedule(np.arange(<span class="dv">0</span>,<span class="dv">1000</span>,<span class="dv">1</span>)))</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Learning rate"</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time"</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03. Linear regression_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>아래 코드에서는 epoch 수행 횟수를 <code>n_epochs</code>로 정의하였다.</p>
+<div id="cell-44" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>n_epochs <span class="op">=</span> <span class="dv">50</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.random.randn(<span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>evolution_s <span class="op">=</span> np.ravel(theta)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 랜덤 셔플링을 통해 미리 훈련할 샘플의 순서를 정한다.</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    random_idxes <span class="op">=</span> np.random.choice(<span class="bu">range</span>(N), size<span class="op">=</span>N, replace<span class="op">=</span><span class="va">False</span>)  </span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, rd_id <span class="kw">in</span> <span class="bu">enumerate</span>(random_idxes):</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 하나의 observation을 선택</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>        xi, yi <span class="op">=</span> Xb[rd_id:rd_id<span class="op">+</span><span class="dv">1</span>, ], Y[rd_id:rd_id<span class="op">+</span><span class="dv">1</span>, ]</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gradient 계산</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>        grad <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> xi.T <span class="op">@</span> (xi <span class="op">@</span> theta <span class="op">-</span> yi)</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># learning schedule 설정</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>        eta <span class="op">=</span> learning_schedule(epoch <span class="op">*</span> N <span class="op">+</span> i)</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># theta 이동</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>        theta <span class="op">=</span> theta <span class="op">-</span> eta <span class="op">*</span> grad</span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>        evolution_s <span class="op">=</span> np.vstack((evolution_s, np.ravel(theta)))</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>theta</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
+<pre><code>array([[3.98773176],
+       [2.85309052]])</code></pre>
+</div>
+</div>
+<div id="cell-45" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>evolution_s </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>array([[-0.42231137,  0.18332146],
+       [ 0.18433848,  0.68230235],
+       [ 0.61034228,  0.88446891],
+       ...,
+       [ 3.98454059,  2.85181365],
+       [ 3.98751274,  2.85306869],
+       [ 3.98773176,  2.85309052]])</code></pre>
+</div>
+</div>
+<p>물론 기계학습을 할 때마다 위와 같은 SGD의 코드를 매번 작성할 필요는 없다.</p>
+<p><code>sklearn</code>으로 간단히 구현할 수 있다.</p>
+<p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDRegressor.html"><code>sklearn.linear_model.SGDRegressor</code></a>는 확률경사하강법으로 추정하는 선형 모형에 대한 class를 제공한다.</p>
+<div id="cell-47" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> SGDRegressor</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>sgd_reg <span class="op">=</span> SGDRegressor(max_iter <span class="op">=</span> <span class="dv">1000</span>, tol <span class="op">=</span> <span class="fl">1e-3</span>, penalty <span class="op">=</span> <span class="va">None</span>, eta0 <span class="op">=</span> <span class="fl">0.1</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>sgd_reg</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="24">
+<style>#sk-container-id-2 {color: black;}#sk-container-id-2 pre{padding: 0;}#sk-container-id-2 div.sk-toggleable {background-color: white;}#sk-container-id-2 label.sk-toggleable__label {cursor: pointer;display: block;width: 100%;margin-bottom: 0;padding: 0.3em;box-sizing: border-box;text-align: center;}#sk-container-id-2 label.sk-toggleable__label-arrow:before {content: "▸";float: left;margin-right: 0.25em;color: #696969;}#sk-container-id-2 label.sk-toggleable__label-arrow:hover:before {color: black;}#sk-container-id-2 div.sk-estimator:hover label.sk-toggleable__label-arrow:before {color: black;}#sk-container-id-2 div.sk-toggleable__content {max-height: 0;max-width: 0;overflow: hidden;text-align: left;background-color: #f0f8ff;}#sk-container-id-2 div.sk-toggleable__content pre {margin: 0.2em;color: black;border-radius: 0.25em;background-color: #f0f8ff;}#sk-container-id-2 input.sk-toggleable__control:checked~div.sk-toggleable__content {max-height: 200px;max-width: 100%;overflow: auto;}#sk-container-id-2 input.sk-toggleable__control:checked~label.sk-toggleable__label-arrow:before {content: "▾";}#sk-container-id-2 div.sk-estimator input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-label input.sk-toggleable__control:checked~label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 input.sk-hidden--visually {border: 0;clip: rect(1px 1px 1px 1px);clip: rect(1px, 1px, 1px, 1px);height: 1px;margin: -1px;overflow: hidden;padding: 0;position: absolute;width: 1px;}#sk-container-id-2 div.sk-estimator {font-family: monospace;background-color: #f0f8ff;border: 1px dotted black;border-radius: 0.25em;box-sizing: border-box;margin-bottom: 0.5em;}#sk-container-id-2 div.sk-estimator:hover {background-color: #d4ebff;}#sk-container-id-2 div.sk-parallel-item::after {content: "";width: 100%;border-bottom: 1px solid gray;flex-grow: 1;}#sk-container-id-2 div.sk-label:hover label.sk-toggleable__label {background-color: #d4ebff;}#sk-container-id-2 div.sk-serial::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: 0;}#sk-container-id-2 div.sk-serial {display: flex;flex-direction: column;align-items: center;background-color: white;padding-right: 0.2em;padding-left: 0.2em;position: relative;}#sk-container-id-2 div.sk-item {position: relative;z-index: 1;}#sk-container-id-2 div.sk-parallel {display: flex;align-items: stretch;justify-content: center;background-color: white;position: relative;}#sk-container-id-2 div.sk-item::before, #sk-container-id-2 div.sk-parallel-item::before {content: "";position: absolute;border-left: 1px solid gray;box-sizing: border-box;top: 0;bottom: 0;left: 50%;z-index: -1;}#sk-container-id-2 div.sk-parallel-item {display: flex;flex-direction: column;z-index: 1;position: relative;background-color: white;}#sk-container-id-2 div.sk-parallel-item:first-child::after {align-self: flex-end;width: 50%;}#sk-container-id-2 div.sk-parallel-item:last-child::after {align-self: flex-start;width: 50%;}#sk-container-id-2 div.sk-parallel-item:only-child::after {width: 0;}#sk-container-id-2 div.sk-dashed-wrapped {border: 1px dashed gray;margin: 0 0.4em 0.5em 0.4em;box-sizing: border-box;padding-bottom: 0.4em;background-color: white;}#sk-container-id-2 div.sk-label label {font-family: monospace;font-weight: bold;display: inline-block;line-height: 1.2em;}#sk-container-id-2 div.sk-label-container {text-align: center;}#sk-container-id-2 div.sk-container {/* jupyter's `normalize.less` sets `[hidden] { display: none; }` but bootstrap.min.css set `[hidden] { display: none !important; }` so we also need the `!important` here to be able to override the default hidden behavior on the sphinx rendered scikit-learn.org. See: https://github.com/scikit-learn/scikit-learn/issues/21755 */display: inline-block !important;position: relative;}#sk-container-id-2 div.sk-text-repr-fallback {display: none;}</style><div id="sk-container-id-2" class="sk-top-container"><div class="sk-text-repr-fallback"><pre>SGDRegressor(eta0=0.1, penalty=None)</pre><b>In a Jupyter environment, please rerun this cell to show the HTML representation or trust the notebook. <br>On GitHub, the HTML representation is unable to render, please try loading this page with nbviewer.org.</b></div><div class="sk-container" hidden=""><div class="sk-item"><div class="sk-estimator sk-toggleable"><input class="sk-toggleable__control sk-hidden--visually" id="sk-estimator-id-2" type="checkbox" checked=""><label for="sk-estimator-id-2" class="sk-toggleable__label sk-toggleable__label-arrow">SGDRegressor</label><div class="sk-toggleable__content"><pre>SGDRegressor(eta0=0.1, penalty=None)</pre></div></div></div></div></div>
+</div>
+</div>
+<p><code>sklearn.linear_model.LinearRegression</code>와 같이 모형을 추정할 때는 <code>.fit</code> method를 이용한다.</p>
+<p><code>Y.ravel()</code>로 <code>Y</code>값을 1d-array로 바꾸어 인자로 전달한다.</p>
+<div id="cell-49" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>sgd_reg.fit(X, Y.ravel())</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>sgd_reg.intercept_, sgd_reg.coef_</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<pre><code>(array([3.97727777]), array([2.84331838]))</code></pre>
+</div>
+</div>
+<div id="cell-50" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with visualization</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize <span class="op">=</span> (<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>contours <span class="op">=</span> plt.contour(Theta0, Theta1, Z, <span class="dv">40</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.clabel(contours, inline = True, fontsize = 10)</span></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>plt.plot(theta_optimal[<span class="dv">0</span>], theta_optimal[<span class="dv">1</span>], <span class="st">'k*'</span>, markersize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="co"># line plot for estimation procedure</span></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>plt.plot(evolution_s[:,<span class="dv">0</span>], evolution_s[:,<span class="dv">1</span>], <span class="st">".-"</span>, color<span class="op">=</span><span class="st">'red'</span>)</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>plt.colorbar(contours)</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="vs">r"</span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta_0</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="vs">r"</span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta_1</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03. Linear regression_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="미니배치-경사-하강법" class="level3" data-number="3.8.5">
+<h3 data-number="3.8.5" class="anchored" data-anchor-id="미니배치-경사-하강법"><span class="header-section-number">3.8.5</span> 미니배치 경사 하강법</h3>
+<p>각 스텝에서 하나의 샘플이 아니라 미니배치라 불리우는 임의의 작은 수(<span class="math inline">\(&gt;1\)</span>)의 샘플에 대해 그레디언트를 계산하는 방법.</p>
+<p>그레디언트를 계산할 때 사용하는 샘플의 수를 보통 batch size라고 한다.</p>
+<p>즉 SGD는 batch size = 1인 미니배치 경사 하강법과 같다.</p>
+<p>미니배치의 크기를 적절히 하면 이 알고리즘은 파라미터 공간에서 SGD 보다 덜 불규칙하게 움직일 수 있다.</p>
+<div id="cell-52" class="cell" data-scrolled="true" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>n_epochs <span class="op">=</span> <span class="dv">50</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>t0, t1 <span class="op">=</span> <span class="dv">5</span>, <span class="dv">100</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>eta <span class="op">=</span> <span class="fl">0.01</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> learning_schedule(t):</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> t0 <span class="op">/</span> (t <span class="op">+</span> t1)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.random.randn(<span class="dv">2</span>, <span class="dv">1</span>)</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">5</span>     <span class="co"># batch 하나의 크기</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>num_batch <span class="op">=</span> N <span class="op">//</span> batch_size</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>evolution_m <span class="op">=</span> np.ravel(theta)</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(n_epochs):</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>    random_indexes <span class="op">=</span> np.random.choice(<span class="bu">range</span>(N), size<span class="op">=</span>N, replace<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_batch <span class="op">-</span> <span class="dv">1</span>):</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>        selected_idxs <span class="op">=</span> random_indexes[i <span class="op">*</span> batch_size:(i <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> batch_size]</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>        xi, yi <span class="op">=</span> Xb[selected_idxs, :], Y[selected_idxs, :]</span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>        grad <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> xi.T <span class="op">@</span> (xi <span class="op">@</span> theta <span class="op">-</span> yi)</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>        eta <span class="op">=</span> learning_schedule(epoch <span class="op">*</span> N <span class="op">+</span> i <span class="op">*</span> batch_size)</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a>        theta <span class="op">=</span> theta <span class="op">-</span> eta <span class="op">*</span> grad</span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>        evolution_m <span class="op">=</span> np.vstack((evolution_m, np.ravel(theta)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="cell-53" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># with visualization</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize <span class="op">=</span> (<span class="dv">8</span>, <span class="dv">6</span>))</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>contours <span class="op">=</span> plt.contour(Theta0, Theta1, Z, <span class="dv">40</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>plt.plot(theta_optimal[<span class="dv">0</span>], theta_optimal[<span class="dv">1</span>], <span class="st">'k*'</span>, markersize<span class="op">=</span><span class="dv">15</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># line plot for estimation procedure</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>plt.plot(evolution_m[:,<span class="dv">0</span>], evolution_m[:,<span class="dv">1</span>], <span class="st">".-"</span>, color<span class="op">=</span><span class="st">'green'</span>)</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>plt.colorbar(contours)</span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="vs">r"</span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta_0</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="vs">r"</span><span class="dv">$</span><span class="ch">\t</span><span class="vs">heta_1</span><span class="dv">$</span><span class="vs">"</span>, fontsize<span class="op">=</span><span class="dv">18</span>)</span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="03. Linear regression_files/figure-html/cell-29-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>교과서의 예제 그림에서 각 경사하강법의 차이를 한눈에 관찰할 수 있다.</p>
+<p><img src="data:image/png;base64,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/0yVKlVo27aty/pevXoRHR3NX3/9BcDChQu57bbbqFy5cqbHCwsLS+1pA4SEhFC/fn327dvn0m78+PFcddVVFC9enMKFC1O9up092b59OwDh4eHUrl2b//3vf3z88cf8/fffWV6LJ86fP8/KlSvp2bMnYWEayKAoSv5EBbwAUqhQIVq3bs2oUaNYvHgxu3btolGjRowcOZKTJ09muu+JEyfcDjunzKuneHgfP37cqxCxMmXKZFgXEhLikk98zJgxDBo0iA4dOjBr1izWrFnD6tWrAVLbGWNYtGgRzZo147nnnqN+/frUrl2b8ePHZ2lDek6ePElycnKehrgpiqL4GhVwXxIRkb31eUTlypXp378/iYmJWfZcy5Yty2E3HvMp68qWLQuQOgftC2bOnEn79u1555136NixI9deey0VKlTI0K527dpMmzaN6OhoNmzYQLt27Rg0aBA//vhjts5XpkwZgoKCfGa/oiiKP1AB9yWHD7sfCs+jEDKwHuTu2LZtG5DWkw4JCQEgNjbWpV2bNm3Yv38/K1eudFn/+eefU6FCBa64wobed+zYke+//97j+bLD+fPnCQ4Odlk3efJkj+2NMTRp0oT/+7//A+DPP/8EPF9TesLCwrjxxhuJiorKsq2iKEqgomW4ChgNGzakQ4cOdO7cmVq1anHmzBnmzZvHhAkT6NatW+rccooQv/POO9x6660UKlSIZs2a0a9fP95//33uvvtuXn31VapWrcr06dNZtGgRH330UarH+siRI5k3bx4tWrTg+eefp27duhw4cID58+e7DTnLjE6dOvHGG28wevRomjdvztKlS/n6669d2mzevJlhw4Zx3333UbduXZKSkpgyZQqFCxemXbt2Ltf04Ycf0rdvX4KDg2ncuDFFihTJcM63336bNm3acMMNN/DUU09RtWpVdu3axcaNGxkzZkz2/umKoij+wJcecYG45NgLPZ8yfvx4uf3226V69eoSEhIiYWFh0qRJE3njjTckLi4utV1iYqIMGjRIypcvL8YYwcnr/eDBg9KrVy8JDw+XIkWKSKNGjeSzzz7LcK5//vlH7r//fgkPD5eQkBCpXbu2PPHEE6nb+/btK1WqVMmwX5s2baRNmzap78+fPy+PPPKIlCtXTooXLy5dunSRXbt2uXiOHzlyRPr06SP16tWT0NBQKVOmjLRu3Vrmz5/v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" width="600"></p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./02. Model_evaluation.html" class="pagination-link" aria-label="모형 정확성 평가">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">모형 정확성 평가</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./04. Classification - Logistic Regression.html" class="pagination-link" aria-label="Classification">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Classification</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
