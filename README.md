@@ -12,13 +12,3 @@
 - 06. Resampling
 - 07. Regularization
 
-## Quarto
-
-HTML 강의자료는 Quarto로 생성되었다.
-
-```powershell
-quarto render
-```
-
-렌더링 결과는 `docs/` 폴더에 생성된다.
-
