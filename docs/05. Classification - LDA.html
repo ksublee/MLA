@@ -347,9 +347,9 @@ p_k(x) = \frac{\pi_k \cdot \frac{1}{\sqrt{2 \pi} \sigma} \exp\left( -\frac{1}{2}
 </ul>
 <p>따라서 분류는 <span class="math inline">\(x\)</span>를 <span class="math inline">\(\delta_k(x)\)</span>가 가장 큰 클래스 <span class="math inline">\(k\)</span>에 할당하는 것으로 수행된다.</p>
 <p>한편, <span class="math inline">\(\delta_k(x)\)</span>는 <span class="math inline">\(x\)</span>에 대한 <strong>선형 함수</strong>이므로, 이 모형이 “Linear” Discriminant Analysis라 불리는 이유다.</p>
-<p>그리고, 확률 계산은 discriminant score에 softmamx 함수를 적용한 것과 동치이다.</p>
+<p>그리고, 확률 계산은 discriminant score에 softmax 함수를 적용한 것과 동치이다.</p>
 <p>즉,</p>
-<p><span class="math display">\[ p_k (x) = \frac{\delta_k (x)}{\sum_{i=1}^K \delta_i (x)} \]</span></p>
+<p><span class="math display">\[ p_k (x) = \frac{e^{\delta_k (x)}}{\sum_{i=1}^K e^{\delta_i (x)}} \]</span></p>
 <p>예를 들어, <span class="math inline">\(K = 2\)</span>이고 사전 확률이 동일하게 <span class="math inline">\(\pi_1 = \pi_2 = 0.5\)</span>일 경우, 결정 경계는 다음과 같이 단순해진다.</p>
 <p><span class="math display">\[
 x = \frac{\mu_1 + \mu_2}{2}
@@ -1728,7 +1728,7 @@ X \mid Y = k \enspace \sim \enspace  \mathcal{N}(\mu_k, \Sigma)
 <li>통계학에서의 1종 오류율, <span class="math inline">\(\alpha\)</span>, 귀무가설(null)이 사실이어도 기각될 확률</li>
 <li>1 - specificity <br><br></li>
 </ul></li>
-<li>False negative rate : 실제 positive 중 negative로 잘못 예상된 False negative에 해당하는 비율, TP/P
+<li>False negative rate : 실제 positive 중 negative로 잘못 예상된 False negative에 해당하는 비율, FN/P
 <ul>
 <li>통계학에서의 2종 오류율, <span class="math inline">\(\beta\)</span>, 귀무가설(null)이 거짓이어도 기각하지 못할 확률</li>
 <li>1 - sensitivity <br><br></li>

@@ -422,7 +422,7 @@ f(x)
 <ul>
 <li><p>주어진 데이터와 가정한 parameteric model이 가장 잘 들어맞는 parameter 값들을 추정하는 과정</p></li>
 <li><p>보통은 손실 함수나 음의 로그우도함수와 같은 목적 함수들을 최소화하는 과정.</p></li>
-<li><p>예를 들어, 회귀문제에서는 Mean sqaured error 함수를 목적함수로 두고 최소화할 수 있음</p></li>
+<li><p>예를 들어, 회귀문제에서는 Mean squared error 함수를 목적함수로 두고 최소화할 수 있음</p></li>
 </ul>
 <p><span class="math display">\[ \text{MSE}(\hat \theta) = \frac{1}{N}\sum_{i=1}^N (y_i -  f(x_i, \hat \theta))^2 \]</span></p>
 <p>여기서 <span class="math inline">\((x_i,y_i)\)</span>는 <span class="math inline">\(i\)</span>번째 관측값이고, <span class="math inline">\(N\)</span>은 전체 관측값의 개수이다. 또한 <span class="math inline">\(\hat\theta\)</span>는 주어진 데이터를 이용하여 추정한 parameter 값을 의미한다. 즉, <span class="math inline">\(\theta\)</span>가 모형 안에 들어 있는 미지의 parameter라면, <span class="math inline">\(\hat\theta\)</span>는 training data를 이용하여 얻은 그 추정값이다.</p>
