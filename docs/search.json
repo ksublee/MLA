@@ -334,7 +334,7 @@
     "href": "07. Regularization.html",
     "title": "7  Linear model selection and model regularization",
     "section": "",
-    "text": "7.0.1 Why consider alternatives?\n선형모형을 다시 돌아보자.\n\\[ Y = \\beta_0 + \\beta_1 X_1 + \\cdots + \\beta_p X_p + \\epsilon \\]\n선형모형은 간단함에도 불구하고, interpretablity가 좋고, 종종 좋은 predictive performance를 보인다.\n이 장에서는 선형모형의 기본적인 장점은 유지하면서 단점을 보완하는 대안들을 살펴본다.",
+    "text": "7.1 Subset selection\n선형모형을 다시 돌아보자.\n\\[ Y = \\beta_0 + \\beta_1 X_1 + \\cdots + \\beta_p X_p + \\epsilon \\]\n선형모형은 간단함에도 불구하고, interpretablity가 좋고, 종종 좋은 predictive performance를 보인다.\n이 장에서는 선형모형의 기본적인 장점은 유지하면서 단점을 보완하는 대안들을 살펴본다.\n\\(p\\)개의 predictor가 있을 때, \\(k=1, 2, \\cdots, p\\)에 대하여 다음을 실행한다.",
     "crumbs": [
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Linear model selection and model regularization</span>"
     ]
@@ -343,8 +343,8 @@
     "objectID": "07. Regularization.html#subset-selection",
     "href": "07. Regularization.html#subset-selection",
     "title": "7  Linear model selection and model regularization",
-    "section": "7.1 Subset selection",
-    "text": "7.1 Subset selection\n\\(p\\)개의 predictor가 있을 때, \\(k=1, 2, \\cdots, p\\)에 대하여 다음을 실행한다.\n\n각 \\(k\\)에 대하여 정확히 \\(\\binom{p}{k}\\)개의 가능한 모형이 있다. 이 모형들에 대해 모두 적합을 진행한다.\n\n각 \\(k\\)에 대하여 적합된 모형 중 가장 적합이 잘된 모형이 있을 것이다. 이를 \\(\\mathcal M_k\\)라 하자.\n한편 predictor가 없는 단순한 평균 모형은 \\(\\mathcal M_0\\)라고 하겠다.\n\n\\(\\mathcal M_0, \\mathcal M_1, \\cdots, \\mathcal M_p\\) 중에서 best인 모형을 찾는다.\n\nBest를 찾기 위해서 cross-validated prediction error, \\(C_p\\) (AIC), BIC 혹은 adjusted \\(R^2\\) 등이 이용될 수 있다.",
+    "section": "",
+    "text": "각 \\(k\\)에 대하여 정확히 \\(\\binom{p}{k}\\)개의 가능한 모형이 있다. 이 모형들에 대해 모두 적합을 진행한다.\n\n각 \\(k\\)에 대하여 적합된 모형 중 가장 적합이 잘된 모형이 있을 것이다. 이를 \\(\\mathcal M_k\\)라 하자.\n한편 predictor가 없는 단순한 평균 모형은 \\(\\mathcal M_0\\)라고 하겠다.\n\n\\(\\mathcal M_0, \\mathcal M_1, \\cdots, \\mathcal M_p\\) 중에서 best인 모형을 찾는다.\n\nBest를 찾기 위해서 cross-validated prediction error, \\(C_p\\) (AIC), BIC 혹은 adjusted \\(R^2\\) 등이 이용될 수 있다.",
     "crumbs": [
       "<span class='chapter-number'>7</span>  <span class='chapter-title'>Linear model selection and model regularization</span>"
     ]
